@@ -50,8 +50,11 @@ app.get('/account', async function (req, res) {
 })
 
 app.post('/checkout', async (req, res) => {
+    console.log(req.body);
     const { customerId } = req.session
-    const session = await Stripe.createCheckoutSession(customerId, productToPriceMap.BASIC)
+    const { product, trial } = req.body
+    const price = productToPriceMap[product.toUpperCase()];
+    const session = await Stripe.createCheckoutSession(customerId, price, trial)
     res.send({ sessionId: session.id })
 })
 

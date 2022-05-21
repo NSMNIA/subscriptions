@@ -23,10 +23,10 @@ const getCustomerByEmail = async (email) => {
     return customer
 }
 
-const createCheckoutSession = async (customer, price) => {
-    const session = await Stripe.checkout.sessions.create({
+const createCheckoutSession = async (customer, price, trial = true) => {
+    let checkOut = {
         mode: 'subscription',
-        payment_method_types: ['card', 'sepa_debit'],
+        payment_method_types: ['sepa_debit', 'card'],
         customer,
         line_items: [
             {
@@ -39,10 +39,29 @@ const createCheckoutSession = async (customer, price) => {
         },
         success_url: `http://localhost:4242/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `http://localhost:4242/failed`
-    })
+    }
+
+    if (!trial) {
+        checkOut = {
+            mode: 'subscription',
+            payment_method_types: ['sepa_debit', 'card'],
+            customer,
+            line_items: [
+                {
+                    price,
+                    quantity: 1
+                }
+            ],
+            success_url: `http://localhost:4242/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `http://localhost:4242/failed`
+        }
+    }
+
+    const session = await Stripe.checkout.sessions.create(checkOut);
 
     return session
 }
+
 
 module.exports = {
     addNewCustomer,

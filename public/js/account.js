@@ -39,16 +39,19 @@ var PUBLISHABLE_KEY = 'pk_test_51L1DoqCjOglZiLkwBj26ZAkRfZUyNkE63zAt6oHI9rfnkrjZ
 var stripe = Stripe(PUBLISHABLE_KEY);
 var checkOutButton = document.querySelector('#checkout-button');
 checkOutButton === null || checkOutButton === void 0 ? void 0 : checkOutButton.addEventListener('click', function (event) { return __awaiter(void 0, void 0, void 0, function () {
-    var product;
+    var product, trial;
     return __generator(this, function (_a) {
         product = document.querySelector('input[name="product"]:checked');
+        console.log(product);
+        trial = document.querySelector('input[name="trial"]:checked');
         fetch('/checkout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                product: product
+                product: product.value,
+                trial: trial ? true : false
             })
         }).then(function (result) { return result.json(); })
             .then(function (_a) {

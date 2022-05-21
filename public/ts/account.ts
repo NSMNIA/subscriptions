@@ -4,13 +4,16 @@ const stripe = Stripe(PUBLISHABLE_KEY);
 const checkOutButton = document.querySelector<HTMLButtonElement>('#checkout-button');
 checkOutButton?.addEventListener('click', async (event) => {
     const product = document.querySelector('input[name="product"]:checked') as HTMLInputElement;
+    console.log(product);
+    const trial = document.querySelector('input[name="trial"]:checked') as HTMLInputElement;
     fetch('/checkout', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            product: product
+            product: product.value,
+            trial: trial ? true : false
         })
     }).then((result: any) => result.json())
         .then(({ sessionId }) => stripe.redirectToCheckout({ sessionId }));
